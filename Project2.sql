@@ -1,12 +1,15 @@
 --drop the database if it exists
 if db_id('disk_inventory') is not null
-	drop database disk_inventory;
+	drop database disk_inventory
+go
 
 --create the database
-create database disk_inventory;
+create database disk_inventory
+go
 
 --use the database
-use disk_inventory;
+use disk_inventory
+go
 
 -- create the tables
 create table Status
@@ -51,4 +54,4 @@ create table DiskHasBorrower
 );
 
 -- insert data into the tables
---to be added later
+-- !!!!!! To be added in project 3 !!!!!!
