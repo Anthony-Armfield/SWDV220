@@ -1,5 +1,7 @@
-------------------I need to change the release dates to be 2018 instead of 2028 and separate the artist names
--- I am making up names for artists with single names or bands to work with Project 4
+------------------ I am adjusting the artist names to include a band name.
+----------- If the artist name is the band name, I will find a band member's name and use that.
+----------- If the artist is a solo artist, I will use their first and last name as the band name.
+
 --drop the database if it exists
 if db_id('disk_inventory') is not null
 	drop database disk_inventory
@@ -19,6 +21,7 @@ create table Status
 	status_ID	int	not null	identity	primary key,
 	status	varchar(15)	not null
 );
+go
 create table Disk
 (
 	disk_ID	int	not null	identity	primary key,
@@ -28,19 +31,23 @@ create table Disk
 	disk_type	varchar(100) not null,
 	status_ID	int not null	references Status(status_ID)
 );
+go
 create table ArtistInfo
 (
 	artist_ID	int	not null	identity	primary key,
 	artist_FirstName	varchar(100)	not null,
-	artist_LastName	varchar(100)	not null	unique,
+	artist_LastName	varchar(100)	not null,
+	artist_band	varchar(50)	not null,
 	artist_type	varchar(15)	not null
 );
+go
 create table DiskHasArtist
 (
 	disk_has_artist_ID	int	not null	identity	primary key,	-- created a PK for the disk has artist table
 	disk_ID	int not null	references Disk(disk_ID),
 	artist_ID	int	not null	references ArtistInfo(artist_ID)
 );
+go
 create table BorrowerInfo
 (
 	borrower_ID	int	not null	identity	primary key,
@@ -48,6 +55,7 @@ create table BorrowerInfo
 	borrower_last_name	varchar(100)	not null,
 	borrower_phone_number	varchar(14)	not null
 );
+go
 create table DiskHasBorrower
 (
 	borrowed_session_ID	int	not null	identity	primary key,
@@ -56,11 +64,7 @@ create table DiskHasBorrower
 	borrower_ID	int	not null	references BorrowerInfo(borrower_ID),
 	disk_ID	int	not null	references Disk(disk_ID)
 );
-
-
--- end of adjustments
-
-
+go
 
 -- insert data into the tables
 
@@ -76,6 +80,7 @@ insert into Status
 	values
 		('Borrowed'), 
 		('In Inventory');
+go
 
 --insert into the Disk table
 insert into Disk
@@ -107,35 +112,38 @@ insert into Disk
 		('Lost & Found', 'Country', '2018-03-28', 'CD', 2),
 		('Virtue', 'Neo-psychodelia', '2018-03-30', 'CD', 2),
 		('Where''s the Drop?', 'Classical', '2018-03-30', 'CD', 2);
+go
 
 -- insert into the ArtistInfo table
 insert into ArtistInfo
 	(
 		artist_FirstName,
 		artist_LastName,
+		artist_band,
 		artist_type
 	)
 	values
-		('Jeff', 'Rosenstock', 'Solo'),
-		('Cupcakke', 'Jones', 'Solo'),
-		('Avatar', 'Smith', 'Band'),
-		('Black Rebel', 'Motorcycle Club', 'Band'),
-		('Black Veil', 'Brides', 'Band'),
-		('Borns', 'Mitchell', 'Band'),
-		('Jow', 'Satriani', 'Solo'),
-		('Meghan', 'Patrick', 'Solo'),
-		('Tonight', 'Alive', 'Band'),
-		('Anvil', 'Ketchum', 'Band'),
-		('Fall Out', 'Boy', 'Band'),
-		('Migos', 'Amigos', 'Band'),
-		('Don', 'Diablo', 'Solo'),
-		('6ix', '9ine', 'Solo'),
-		('Logic', 'Sense', 'Solo'),
-		('Scotty', 'McCreery', 'Solo'),
-		('Jack', 'White', 'Solo'),
-		('Troy', 'Cassar-Daley', 'Solo'),
-		('The', 'Voidz', 'Band'),
-		('Dead', 'Mau5', 'Solo');
+		('Jeff', 'Rosenstock', 'Jeff Rosenstock', 'Solo'),
+		('Elizabeth', 'Harris', 'Cupcakke', 'Solo'),
+		('Johannes', 'Echerstrom', 'Avatar', 'Band'),
+		('Peter', 'Hayes', 'Black Rebel Motorcycle Club', 'Band'),
+		('Johnny', 'Herold', 'Black Veil Brides', 'Band'),
+		('Garrett', 'Borns', 'Borns', 'Solo'),
+		('Joe', 'Satriani', 'Joe Satriani', 'Solo'),
+		('Meghan', 'Patrick', 'Meghan Patrick', 'Solo'),
+		('Jenna', 'McDougall', 'Tonight Alive', 'Band'),
+		('Rob', 'Reiner', 'Anvil', 'Band'),
+		('Patrick', 'Stump', 'Fall Out Boy', 'Band'),
+		('Kirshnik', 'Ball', 'Migos', 'Band'),
+		('Don', 'Diablo', 'Don Diablo', 'Solo'),
+		('Daniel', 'Hernandez', '6ix9ine', 'Solo'),
+		('Robert', 'Hall', 'Logic', 'Solo'),
+		('Scotty', 'McCreery', 'Scotty McCreery', 'Solo'),
+		('Jack', 'White', 'Jack White', 'Solo'),
+		('Troy', 'Cassar-Daley', 'Troy Cassar-Daley', 'Solo'),
+		('Julian', 'Casablancas', 'The Voidz', 'Band'),
+		('Joel', 'Zimmerman', 'Deadmau5', 'Solo');
+go
 
 --insert into the DiskHasArtist table
 insert into DiskHasArtist
@@ -166,6 +174,7 @@ insert into DiskHasArtist
 		(18, 18),
 		(19, 19),
 		(20, 20);
+go
 
 -- insert into the BorrowerInfo table
 insert into BorrowerInfo
@@ -197,6 +206,7 @@ insert into BorrowerInfo
 		('Jeff', 'Powell', '208-697-1345'),
 		('Jenny', 'Powell', '208-697-1345'),
 		('Stephanie', 'Powell', '208-697-2357');
+go
 
 --Insert into the DiskHasBorrower table
 insert into DiskHasBorrower
@@ -228,6 +238,7 @@ insert into DiskHasBorrower
 		('10-10-2018', '10-14-2018', 18, 18),
 		('10-10-2018', '10-14-2018', 20, 19),
 		('10-10-2018', '10-14-2018', 21, 20);
+go
 
 
 --Additional Queries!!!
@@ -235,21 +246,22 @@ insert into DiskHasBorrower
 --Query to list all disks that have not been returned
 select borrower_ID as 'Borrower ID', disk_ID as 'Disk ID', borrowed_date as 'Borrowed Date', returned_date as 'Return Date' from DiskHasBorrower
 where returned_date is null
+go
 
 -- updating 1 row with a where clause in the Disk table
 update Disk
 set genre = 'Country'
 where disk_ID = 12
+go
 
 -- deleting 1 row using the where clause from the borrower table
 delete from BorrowerInfo
 where borrower_ID = 22
 
--------------------End of adjustments
-
 use disk_inventory
 go
 
+---------------- end of project 3 info and adjustments, start of project 4
 --3 showing disks by individual artists, not bands
 select disk_name, release_date, artist_FirstName, artist_LastName
 from Disk
@@ -257,6 +269,7 @@ from Disk
 	join ArtistInfo on DiskHasArtist.artist_ID = ArtistInfo.artist_ID
 where artist_type = 'Solo'
 order by artist_LastName, artist_FirstName, disk_name
+go
 
 --4 creating a view for artists that are solo and not band
 create view View_Individual_Artist as
@@ -267,12 +280,13 @@ go
 select artist_FirstName, artist_LastName from View_Individual_Artist
 
 --5 showing disk and artist info based on bands
-select disk_name, release_date, artist_FirstName + ' ' + artist_LastName as 'Group Name'
+select disk_name, release_date, artist_band
 from Disk
 	join DiskHasArtist on Disk.disk_ID = DiskHasArtist.disk_ID
 	join ArtistInfo on DiskHasArtist.artist_ID = ArtistInfo.artist_ID
 where artist_type = 'Band'
-order by 'Group Name', disk_name
+order by artist_band, disk_name
+go
 
 --6 showing disks that have been borrowed (which is all of them at this point)
 select borrower_first_name, borrower_last_name, disk_name, borrowed_date
@@ -280,6 +294,7 @@ from BorrowerInfo
 	join DiskHasBorrower on BorrowerInfo.borrower_ID = DiskHasBorrower.borrower_ID
 	join Disk on DiskHasBorrower.disk_ID = Disk.disk_ID
 order by borrower_last_name, borrower_first_name, disk_name, borrowed_date
+go
 
 --7 showing the number of times a disk has been borrowed
 select DiskHasBorrower.disk_ID as DiskID, disk_name as 'Disk Name', count(borrowed_session_ID) as 'Times Borrowed'
@@ -287,6 +302,7 @@ from DiskHasBorrower
 	join Disk
 		on DiskHasBorrower.disk_ID = Disk.disk_ID
 group by DiskHasBorrower.disk_ID, disk_name
+go
 
 --8 showing the disks that are still on loan and by who
 select disk_name as 'Disk Name', borrowed_date as Borrowed, returned_date as Returned, borrower_last_name as 'Last Name'
@@ -295,3 +311,7 @@ from BorrowerInfo
 	join Disk on DiskHasBorrower.disk_ID = Disk.disk_ID
 where returned_date is null
 order by borrower_last_name, borrower_first_name, disk_name, borrowed_date
+go
+
+-------------------End of adjustments for project 4, starting of project 5
+--Project 5 will go here!!!!
