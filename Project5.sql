@@ -314,8 +314,293 @@ order by borrower_last_name, borrower_first_name, disk_name, borrowed_date
 go
 
 -------------------End of adjustments for project 4, starting of project 5
---Project 5 will go here!!!!
 
+--use the disk_inventory DB
 use disk_inventory
 go
 
+---------- 3 ----------
+
+-- 3A. --
+--do a select to see the info before the update
+select * from ArtistInfo
+where artist_ID = '14'
+go
+--create the stored procedure to update a row in the table ArtistInfo
+create proc sp_UpdateArtistName
+	@ArtistID int,
+	@ArtistFName varchar(100),
+	@ArtistLName varchar(100)
+as
+	begin
+	--start error checking
+		begin try
+			update ArtistInfo
+				set 
+					artist_FirstName = @ArtistFName,
+					artist_LastName = @ArtistLName
+				where 
+					artist_ID = @ArtistID
+			--display the change
+			select * from ArtistInfo
+			where artist_ID = @ArtistID
+			print 'Table has been updated!'
+		end try
+		begin catch
+			print error_message()
+		end catch
+	end
+go
+--execute the update stored procedure
+exec sp_UpdateArtistName '14', 'Toni', 'Braxton' --passing parameters in the execute
+go
+-------- end of 3A. -----
+
+-- 3B. --
+--create the stored procedure to insert a row in the table ArtistInfo
+create proc sp_InsertArtistInfo
+	@ArtistFName varchar(100),
+	@ArtistLName varchar(100),
+	@ArtistBand varchar(50),
+	@artistType varchar(50)
+as
+	begin
+		begin try
+		--start error checking
+			insert into ArtistInfo
+				(
+					artist_FirstName,
+					artist_LastName,
+					artist_band,
+					artist_type
+				)
+				values
+					(@ArtistFName, @ArtistLName, @ArtistBand, @artistType)
+				
+				--selct to display the change
+				select * from ArtistInfo
+				where artist_FirstName = @ArtistFName
+				print 'Table has been updated!'
+		end try
+		begin catch
+			print error_message()
+		end catch
+	end
+go
+--execute the stored procedure
+execute sp_InsertArtistInfo 'Cardi', 'B', 'Cardi B', 'Solo' --passing parameters in the execute
+go
+
+-------- end of 3B. -----
+-- 3C. --
+--create the stored procedure for deleting an artist
+drop proc sp_DeleteArtistInfo
+go
+create proc sp_DeleteArtistInfo
+	@ArtistID int
+as
+	begin
+	--start error checking
+		begin try
+			delete from DiskHasArtist
+				where artist_ID = @ArtistID
+			delete from ArtistInfo
+				where artist_ID = @ArtistID
+			--select to display the changes
+			select * from ArtistInfo
+			print 'Table has been updated!'
+		end try
+		begin catch
+			print error_message()
+		end catch
+	end
+go
+--execute the stored procedure
+exec sp_DeleteArtistInfo '21'
+go
+
+------------ End of 3C. ----------------------
+
+---------- 4 ----------
+-- 4A. --
+--do a select to see the info before the update
+select * from BorrowerInfo
+where borrower_ID = '14'
+go
+--create the stored procedure to update a row in the table
+create proc sp_UpdateBorrowerName
+	@BorrowerID int,
+	@BorrowerFName varchar(100),
+	@BorrowerLName varchar(100)
+as
+	begin
+	--start error checking
+		begin try
+			update BorrowerInfo
+				set 
+					borrower_first_name = @BorrowerFName,
+					borrower_last_name = @BorrowerLName
+				where 
+					borrower_ID = @BorrowerID
+			--selct to display the change
+			select * from BorrowerInfo
+			where borrower_ID = @BorrowerID
+			print 'Table has been updated!'
+		end try
+		begin catch
+			print error_message()
+		end catch
+	end
+go
+--execute the update stored procedure
+exec sp_UpdateBorrowerName '14', 'Johnny', 'Bravo' --passing parameters in the execute
+go
+-------- end of 4A. -----
+
+-- 4B. --
+--create the stored procedure to insert a row in the table
+create proc sp_InsertBorrowerInfo
+	@BorrowerFName varchar(100),
+	@BorrowerLName varchar(100),
+	@BorrowerPhone varchar(14)
+as
+	begin
+		begin try
+			insert into BorrowerInfo
+				(
+					borrower_first_name,
+					borrower_last_name,
+					borrower_phone_number
+				)
+				values
+					(@BorrowerFName, @BorrowerLName, @BorrowerPhone)
+			--selct to display the change
+			select * from BorrowerInfo
+			where borrower_first_name = @BorrowerFName
+			print 'Table has been updated!'
+		end try
+		begin catch
+			print error_message()
+		end catch
+	end
+go
+-- execute the stored procedure
+execute sp_InsertBorrowerInfo 'Timmy', 'Johnson', '208-771-3549' --passing parameters in the execute
+go
+-------- end of 4B. -----
+-- 4C. --
+--create the stored procedure for deleting a borrower
+create proc sp_DeleteBorrowerInfo
+	@BorrowerID int
+as
+	begin
+		begin try
+			delete from DiskHasBorrower
+				where borrower_ID = @BorrowerID
+			delete from BorrowerInfo
+				where borrower_ID = @BorrowerID
+			-- check for changes
+			select * from BorrowerInfo
+			print 'Table has been updated!'
+		end try
+		begin catch
+			print error_message()
+		end catch
+	end
+go
+--execute the stored procedure
+exec sp_DeleteBorrowerInfo '24'
+go
+------------ End of 4C. ----------------------
+
+---------- 5 ----------
+-- 5A. --
+--do a select to see the info before the update
+select * from Disk
+where disk_ID = '1'
+go
+--create the stored procedure to update a row in the table Disk
+create proc sp_UpdateDisk
+	@DiskID int,
+	@DiskName varchar(100)
+as
+	begin
+		begin try
+			update Disk
+				set 
+					disk_name = @DiskName
+				where 
+					disk_ID = @DiskID
+			--selct to display the change
+			select * from Disk
+			where disk_ID = @DiskID
+			print 'Table has been updated!'
+		end try
+		begin catch
+			print error_message()
+		end catch
+	end
+go
+--execute the update stored procedure
+exec sp_UpdateDisk '1', 'Golden' --passing parameters in the execute
+go
+-------- end of 5A. -----
+-- 5B. --
+--create the stored procedure to insert a row in the table Disk
+create proc sp_InsertDiskInfo
+	@DiskName varchar(100),
+	@Genre varchar(100),
+	@ReleaseDate smalldatetime,
+	@DiskType varchar(100),
+	@StatusID int
+as
+	begin
+		begin try
+			insert into Disk
+				(
+					disk_name,
+					genre,
+					release_date,
+					disk_type,
+					status_ID
+				)
+				values
+					(@DiskName, @Genre, @ReleaseDate, @DiskType, @StatusID)
+			--selct to display the change
+			select * from Disk
+			where disk_name = @DiskName
+			print 'Table has been updated!'
+		end try
+		begin catch
+			print error_message()
+		end catch
+	end
+go
+-- execute the stored procedure
+execute sp_InsertDiskInfo 'KOD', 'Hip Hop', '2018-04-20', 'CD', 2 --passing parameters in the execute
+go
+-- 5C. --
+--create the stored procedure for deleting a Disk
+create proc sp_DeleteDisk
+	@DiskID int
+as
+	begin
+		begin try
+			delete from DiskHasBorrower
+				where disk_ID = @DiskID
+			delete from DiskHasArtist
+				where disk_ID = @DiskID
+			delete from Disk
+				where disk_ID = @DiskID
+			-- check for the changes
+			select * from Disk
+			print 'Table has been updated!'
+		end try
+		begin catch
+			print error_message()
+		end catch
+	end
+go
+--execute the stored procedure
+exec sp_DeleteDisk '22'
+go
